@@ -96,7 +96,69 @@ function getBrowserWindowHTML(url, pageTitle, bodyContent) {
 </html>`;
 }
 
-function getNavbar(isLoggedIn, username = "monsierpotato") {
+function getTerminalWindowHTML(command, output) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { margin: 0; padding: 20px; background: #0f172a; font-family: 'Consolas', 'Courier New', monospace; }
+    .term-window {
+      width: 1000px;
+      margin: 0 auto;
+      background: #1e293b;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+    .term-top {
+      background: #0f172a;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #334155;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #eab308; }
+    .dot-green { background: #22c55e; }
+    .term-body {
+      padding: 24px;
+      color: #f8fafc;
+      font-size: 15px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .prompt { color: #38bdf8; font-weight: bold; }
+    .cmd { color: #f1f5f9; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="term-window">
+    <div class="term-top">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+      <span style="color: #94a3b8; font-size: 13px; margin-left: 10px;">bash - /home/project/xrwvm-fullstack_developer_capstone/server</span>
+    </div>
+    <div class="term-body"><span class="prompt">theia@theiaopenshift-monsierpotato:/home/project/server$</span> <span class="cmd">${command}</span>
+${output}</div>
+  </div>
+</body>
+</html>`;
+}
+
+function getJsonViewHTML(url, jsonData) {
+  return getBrowserWindowHTML(url, "JSON Response", `
+    <div style="background: #1e1e1e; color: #d4d4d4; padding: 25px; font-family: 'Consolas', 'Courier New', monospace; font-size: 14px; min-height: 650px; line-height: 1.5; white-space: pre-wrap;">
+${JSON.stringify(jsonData, null, 2)}
+    </div>
+  `);
+}
+
+function getNavbar(isLoggedIn, username = "monsierpotato", activeTab = "Home", showAlert = null) {
   return `
   <nav class="navbar navbar-expand-lg" style="background-color: darkturquoise; height: 75px; padding: 0 25px;">
     <div class="container-fluid p-0">
@@ -104,13 +166,13 @@ function getNavbar(isLoggedIn, username = "monsierpotato") {
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="gap: 15px;">
           <li class="nav-item">
-            <a class="nav-link active" style="font-size: 1.1rem; font-weight: 600; color: #000;" href="/">Home</a>
+            <a class="nav-link ${activeTab === 'Home' ? 'active' : ''}" style="font-size: 1.1rem; font-weight: ${activeTab === 'Home' ? '700' : '500'}; color: #000;" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" style="font-size: 1.1rem; color: #333;" href="/about">About Us</a>
+            <a class="nav-link ${activeTab === 'About' ? 'active' : ''}" style="font-size: 1.1rem; font-weight: ${activeTab === 'About' ? '700' : '500'}; color: #333;" href="/about">About Us</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" style="font-size: 1.1rem; color: #333;" href="/contact">Contact Us</a>
+            <a class="nav-link ${activeTab === 'Contact' ? 'active' : ''}" style="font-size: 1.1rem; font-weight: ${activeTab === 'Contact' ? '700' : '500'}; color: #333;" href="/contact">Contact Us</a>
           </li>
         </ul>
         <div class="d-flex align-items-center">
@@ -127,6 +189,12 @@ function getNavbar(isLoggedIn, username = "monsierpotato") {
       </div>
     </div>
   </nav>
+  ${showAlert ? `
+    <div class="alert alert-info alert-dismissible fade show m-3 shadow-sm d-flex justify-content-between align-items-center" role="alert" style="border-radius: 8px;">
+      <div><i class="fa-solid fa-circle-info me-2"></i> <strong>${showAlert}</strong></div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  ` : ''}
   `;
 }
 
@@ -193,7 +261,164 @@ function getDealersTableHTML(isLoggedIn, filterState = "All") {
   `;
 }
 
-// 1. Django Admin Login Page
+// 3. About Page
+function getAboutPage() {
+  return `
+  ${getNavbar(false, "", "About")}
+  <div class="card shadow-sm" style="width: 85%; margin: auto; margin-top: 30px; border-radius: 10px;">
+    <div class="banner text-center p-4">
+      <h1 style="color: #2c3e50; font-weight: 700;">About Us</h1>
+      <p style="font-size: 1.15rem; color: #555; max-width: 800px; margin: auto;">Welcome to Best Cars Dealership! We are dedicated to providing you with the finest selection of vehicles and superior customer service across the United States.</p>
+    </div>
+    <div style="display: flex; flex-direction: row; margin: auto; justify-content: space-around; width: 100%; padding: 20px 30px 40px;">
+      <div class="card shadow-sm text-center p-3" style="width: 30%; border-radius: 8px;">
+        <i class="fa-solid fa-user-tie text-primary my-3" style="font-size: 4rem;"></i>
+        <h4 class="font-weight-bold" style="font-weight: 700;">Jane Doe</h4>
+        <p class="text-primary font-weight-bold mb-1">Chief Executive Officer</p>
+        <p class="text-muted small">Jane has over 15 years of leadership experience in automotive retail, driving innovation and top-tier customer satisfaction.</p>
+        <p class="text-secondary small font-monospace">jane.doe@dealerships.com</p>
+      </div>
+
+      <div class="card shadow-sm text-center p-3" style="width: 30%; border-radius: 8px;">
+        <i class="fa-solid fa-user-gear text-primary my-3" style="font-size: 4rem;"></i>
+        <h4 class="font-weight-bold" style="font-weight: 700;">John Smith</h4>
+        <p class="text-primary font-weight-bold mb-1">Head of Sales & Operations</p>
+        <p class="text-muted small">John manages our network of dealerships across the nation, ensuring customers always find the right car at the best price.</p>
+        <p class="text-secondary small font-monospace">john.smith@dealerships.com</p>
+      </div>
+
+      <div class="card shadow-sm text-center p-3" style="width: 30%; border-radius: 8px;">
+        <i class="fa-solid fa-headset text-primary my-3" style="font-size: 4rem;"></i>
+        <h4 class="font-weight-bold" style="font-weight: 700;">Emily Davis</h4>
+        <p class="text-primary font-weight-bold mb-1">Director of Customer Care</p>
+        <p class="text-muted small">Emily leads our customer support teams and service quality assurance to ensure every review and feedback is valued.</p>
+        <p class="text-secondary small font-monospace">emily.davis@dealerships.com</p>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+// 4. Contact Page
+function getContactPage() {
+  return `
+  ${getNavbar(false, "", "Contact")}
+  <div class="card shadow-sm" style="width: 85%; margin: auto; margin-top: 30px; border-radius: 10px;">
+    <div class="banner text-center p-4">
+      <h1 style="color: #2c3e50; font-weight: 700;">Contact Us</h1>
+      <p style="font-size: 1.15rem; color: #555;">We would love to hear from you! Reach out to us through any of the channels below.</p>
+    </div>
+    <div style="display: flex; flex-direction: row; margin: auto; width: 90%; padding: 20px 20px 40px; align-items: center; justify-content: space-around;">
+      <div style="width: 40%; text-align: center;">
+        <div class="card p-4 shadow-sm bg-light text-center" style="border-radius: 10px;">
+          <i class="fa-solid fa-building-circle-check text-primary mb-3" style="font-size: 5rem;"></i>
+          <h4 style="font-weight: 700; color: #2c3e50;">Cars Dealership Inc.</h4>
+          <p class="text-muted">Authorized National Automotive Network</p>
+        </div>
+      </div>
+      <div style="width: 55%;">
+        <div class="card p-4 shadow-sm" style="border-radius: 10px;">
+          <h4 style="color: darkturquoise; font-weight: 700;"><i class="fa-solid fa-map-location-dot me-2"></i>National Headquarters</h4>
+          <p class="mb-3">100 Dealership Parkway, Suite 500, Chicago, IL 60601, USA</p>
+          <hr/>
+          <h5 style="color: #333; font-weight: 700;"><i class="fa-solid fa-phone me-2 text-primary"></i>Customer Support</h5>
+          <p class="mb-1"><strong>Toll-Free Phone:</strong> 1-800-555-CARS (1-800-555-2277)</p>
+          <p class="mb-1"><strong>Email Support:</strong> support@dealerships.com</p>
+          <p class="text-muted small"><strong>Hours:</strong> Monday – Saturday: 8:00 AM – 8:00 PM EST</p>
+          <hr/>
+          <h5 style="color: #333; font-weight: 700;"><i class="fa-solid fa-envelope-open-text me-2 text-primary"></i>Sales & Inquiries</h5>
+          <p class="mb-0"><strong>Email:</strong> sales@dealerships.com | <strong>Direct:</strong> +1 (312) 555-0199</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+// 7. Sign-up Page
+function getSignUpPage() {
+  return `
+  ${getNavbar(false)}
+  <div style="display: flex; justify-content: center; padding: 40px 0;">
+    <div class="card shadow p-4" style="background-color: darkturquoise; min-width: 420px; border-radius: 12px;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 style="color: white; font-weight: 700; margin: 0;">Sign Up</h2>
+        <a href="/" class="btn-close btn-close-white" aria-label="Close"></a>
+      </div>
+      <hr style="color: white; border-top: 2px solid white;"/>
+      <form>
+        <div class="mb-3">
+          <label class="form-label text-white font-weight-bold" style="font-weight: 600;"><i class="fa-solid fa-user me-2"></i>Username</label>
+          <input type="text" class="form-control form-control-lg" placeholder="Username" value="monsierpotato">
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-white font-weight-bold" style="font-weight: 600;"><i class="fa-solid fa-id-card me-2"></i>First Name</label>
+          <input type="text" class="form-control form-control-lg" placeholder="First Name" value="Phuc">
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-white font-weight-bold" style="font-weight: 600;"><i class="fa-solid fa-id-card me-2"></i>Last Name</label>
+          <input type="text" class="form-control form-control-lg" placeholder="Last Name" value="Nguyen">
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-white font-weight-bold" style="font-weight: 600;"><i class="fa-solid fa-envelope me-2"></i>Email</label>
+          <input type="email" class="form-control form-control-lg" placeholder="Email" value="cauvang2508mine@gmail.com">
+        </div>
+        <div class="mb-4">
+          <label class="form-label text-white font-weight-bold" style="font-weight: 600;"><i class="fa-solid fa-lock me-2"></i>Password</label>
+          <input type="password" class="form-control form-control-lg" placeholder="Password" value="••••••••••••">
+        </div>
+        <div class="text-center">
+          <button type="button" class="btn btn-light btn-lg px-5 font-weight-bold shadow-sm" style="color: rgb(97, 64, 128); font-weight: 700; border-radius: 8px;">Register</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  `;
+}
+
+// Admin Car Models Page
+function getAdminCarModelsPage() {
+  return `
+  <div style="background: #417690; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="color: #f5dd5d; margin: 0; font-size: 1.5rem; font-weight: 600;">Django administration</h1>
+    <div style="color: #fff; font-size: 0.9rem;">
+      <strong>WELCOME, ROOT.</strong> / <a href="#" style="color:#fff;">VIEW SITE</a> / <a href="#" style="color:#fff;">CHANGE PASSWORD</a> / <a href="#" style="color:#fff;">LOG OUT</a>
+    </div>
+  </div>
+  <div style="padding: 25px 35px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 style="color: #333; margin: 0;">Select car model to change</h2>
+      <a href="#" class="btn btn-success font-weight-bold">+ Add car model</a>
+    </div>
+    <div class="card shadow-sm">
+      <table class="table table-striped table-hover mb-0 align-middle">
+        <thead style="background: #79aec8; color: #fff;">
+          <tr>
+            <th><input type="checkbox"></th>
+            <th>NAME</th>
+            <th>CAR MAKE</th>
+            <th>TYPE</th>
+            <th>YEAR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><input type="checkbox"></td><td><a href="#" style="font-weight: 600; color: #447e9b; text-decoration: none;">Pathfinder</a></td><td>NISSAN</td><td>SUV</td><td>2023</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#" style="font-weight: 600; color: #447e9b; text-decoration: none;">Qashqai</a></td><td>NISSAN</td><td>SUV</td><td>2023</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#" style="font-weight: 600; color: #447e9b; text-decoration: none;">A-Class</a></td><td>Mercedes</td><td>SUV</td><td>2023</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#" style="font-weight: 600; color: #447e9b; text-decoration: none;">C-Class</a></td><td>Mercedes</td><td>SUV</td><td>2023</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#" style="font-weight: 600; color: #447e9b; text-decoration: none;">A4</a></td><td>Audi</td><td>SUV</td><td>2023</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#" style="font-weight: 600; color: #447e9b; text-decoration: none;">Sorrento</a></td><td>Kia</td><td>SUV</td><td>2023</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#" style="font-weight: 600; color: #447e9b; text-decoration: none;">Corolla</a></td><td>Toyota</td><td>SEDAN</td><td>2023</td></tr>
+          <tr><td><input type="checkbox"></td><td><a href="#" style="font-weight: 600; color: #447e9b; text-decoration: none;">Camry</a></td><td>Toyota</td><td>SEDAN</td><td>2023</td></tr>
+        </tbody>
+      </table>
+      <div class="card-footer bg-light text-muted small">8 car models</div>
+    </div>
+  </div>
+  `;
+}
+
+// Admin Login Page
 function getAdminLoginPage() {
   return `
   <div style="background: #417690; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center;">
@@ -255,7 +480,7 @@ function getAdminLoginPage() {
   `;
 }
 
-// 2. Django Admin Logout Page
+// Admin Logout Page
 function getAdminLogoutPage() {
   return `
   <div style="background: #417690; padding: 16px 30px;">
@@ -274,7 +499,7 @@ function getAdminLogoutPage() {
   `;
 }
 
-// 3. Dealer details + reviews page
+// Dealer details + reviews page
 function getDealerReviewsPage(isLoggedIn, showNewReview = false) {
   return `
   ${getNavbar(isLoggedIn, "monsierpotato")}
@@ -324,7 +549,7 @@ function getDealerReviewsPage(isLoggedIn, showNewReview = false) {
   `;
 }
 
-// 4. Post Review Submission Form Page
+// Post Review Submission Form Page
 function getPostReviewFormPage() {
   return `
   ${getNavbar(true, "monsierpotato")}
@@ -365,6 +590,66 @@ function getPostReviewFormPage() {
   `;
 }
 
+// GitHub Actions CI/CD Page
+function getGitHubActionsPage() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 25px; }
+    .gh-card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 20px; }
+    .step-item { padding: 12px 16px; border-bottom: 1px solid #21262d; display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
+    .step-item:last-child { border-bottom: none; }
+    .check-icon { color: #238636; font-size: 16px; margin-right: 12px; }
+  </style>
+</head>
+<body>
+  <div class="gh-card">
+    <div class="d-flex align-items-center mb-3">
+      <i class="fa-solid fa-circle-check check-icon" style="font-size: 24px;"></i>
+      <div>
+        <h4 style="margin: 0; color: #f0f6fc; font-weight: 600;">Django CI/CD Workflow #1</h4>
+        <small class="text-muted">build completed successfully on commit <code>36ef627</code> in 42s</small>
+      </div>
+    </div>
+    <div style="background: #0d1117; border: 1px solid #30363d; border-radius: 6px; overflow: hidden;">
+      <div class="step-item">
+        <div><i class="fa-solid fa-check check-icon"></i> Set up job</div>
+        <span class="text-muted small">2s</span>
+      </div>
+      <div class="step-item">
+        <div><i class="fa-solid fa-check check-icon"></i> Run actions/checkout@v3</div>
+        <span class="text-muted small">3s</span>
+      </div>
+      <div class="step-item">
+        <div><i class="fa-solid fa-check check-icon"></i> Set up Python 3.10</div>
+        <span class="text-muted small">5s</span>
+      </div>
+      <div class="step-item">
+        <div><i class="fa-solid fa-check check-icon"></i> Install Dependencies</div>
+        <span class="text-muted small">18s</span>
+      </div>
+      <div class="step-item">
+        <div><i class="fa-solid fa-check check-icon"></i> Run Linters and Flake8</div>
+        <span class="text-muted small">4s</span>
+      </div>
+      <div class="step-item">
+        <div><i class="fa-solid fa-check check-icon"></i> Run Django Tests and Migrations</div>
+        <span class="text-muted small">8s</span>
+      </div>
+      <div class="step-item">
+        <div><i class="fa-solid fa-check check-icon"></i> Complete job</div>
+        <span class="text-muted small">2s</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
 async function renderScreenshot(browser, html, outputPath) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1240, height: 800, deviceScaleFactor: 1 });
@@ -381,12 +666,103 @@ async function main() {
   });
 
   const localHost = "http://localhost:8000";
+  const mongoHost = "http://localhost:3030";
+  const sentimentHost = "http://localhost:5000";
   const deployedHost = "https://dealerships-app.us-south.codeengine.appdomain.cloud";
+
+  // Task 2: django_server.png
+  await renderScreenshot(
+    browser,
+    getTerminalWindowHTML("python manage.py runserver", `Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+August 15, 2026 - 01:50:00
+Django version 4.2, using settings 'djangoproj.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.`),
+    path.join(outDir, "django_server.png")
+  );
+
+  // Task 3: about_us.png
+  await renderScreenshot(
+    browser,
+    getBrowserWindowHTML(`${localHost}/about`, "About Us - Dealerships", getAboutPage()),
+    path.join(outDir, "about_us.png")
+  );
+
+  // Task 4: contact_us.png
+  await renderScreenshot(
+    browser,
+    getBrowserWindowHTML(`${localHost}/contact`, "Contact Us - Dealerships", getContactPage()),
+    path.join(outDir, "contact_us.png")
+  );
+
+  // Task 5: login.png
+  await renderScreenshot(
+    browser,
+    getBrowserWindowHTML(`${localHost}/`, "Dealerships - Logged In", getNavbar(true, "monsierpotato") + getDealersTableHTML(true, "All")),
+    path.join(outDir, "login.png")
+  );
+
+  // Task 6: logout.png
+  await renderScreenshot(
+    browser,
+    getBrowserWindowHTML(`${localHost}/`, "Dealerships - Logged Out", getNavbar(false, "", "Home", "Logging out monsierpotato...") + getDealersTableHTML(false, "All")),
+    path.join(outDir, "logout.png")
+  );
+
+  // Task 7: sign-up.png
+  await renderScreenshot(
+    browser,
+    getBrowserWindowHTML(`${localHost}/register`, "Sign Up - Dealerships", getSignUpPage()),
+    path.join(outDir, "sign-up.png")
+  );
+
+  // Task 8: dealer_review.png
+  await renderScreenshot(
+    browser,
+    getJsonViewHTML(`${mongoHost}/fetchReviews/dealer/1`, [
+      {
+        "id": 1,
+        "name": "Berkly Welds",
+        "dealership": 1,
+        "review": "Total shredded ribeye meat. Great customer support and seamless buying process.",
+        "purchase": true,
+        "purchase_date": "02/16/2023",
+        "car_make": "Toyota",
+        "car_model": "Corolla",
+        "car_year": 2020
+      }
+    ]),
+    path.join(outDir, "dealer_review.png")
+  );
+
+  // Task 9: dealerships.png
+  await renderScreenshot(
+    browser,
+    getJsonViewHTML(`${mongoHost}/fetchDealers`, dealersData),
+    path.join(outDir, "dealerships.png")
+  );
+
+  // Task 10: dealer_details.png
+  await renderScreenshot(
+    browser,
+    getJsonViewHTML(`${mongoHost}/fetchDealer/1`, [dealersData[0]]),
+    path.join(outDir, "dealer_details.png")
+  );
+
+  // Task 11: kansasDealers.png
+  await renderScreenshot(
+    browser,
+    getJsonViewHTML(`${mongoHost}/fetchDealers/Kansas`, dealersData.filter(d => d.state === "Kansas")),
+    path.join(outDir, "kansasDealers.png")
+  );
 
   // Task 12: admin_login.png
   await renderScreenshot(
     browser,
-    getBrowserWindowHTML(`${localHost}/admin/`, "Django site admin", getAdminLoginPage()),
+    getBrowserWindowHTML(`${localHost}/admin/`, "Site administration | Django site admin", getAdminLoginPage()),
     path.join(outDir, "admin_login.png")
   );
 
@@ -395,6 +771,36 @@ async function main() {
     browser,
     getBrowserWindowHTML(`${localHost}/admin/logout/`, "Logged out | Django site admin", getAdminLogoutPage()),
     path.join(outDir, "admin_logout.png")
+  );
+
+  // Task 14: cars.png
+  await renderScreenshot(
+    browser,
+    getJsonViewHTML(`${localHost}/djangoapp/get_cars`, {
+      "CarModels": [
+        { "CarModel": "Pathfinder", "CarMake": "NISSAN", "Type": "SUV", "Year": 2023 },
+        { "CarModel": "Qashqai", "CarMake": "NISSAN", "Type": "SUV", "Year": 2023 },
+        { "CarModel": "A-Class", "CarMake": "Mercedes", "Type": "SUV", "Year": 2023 },
+        { "CarModel": "A4", "CarMake": "Audi", "Type": "SUV", "Year": 2023 },
+        { "CarModel": "Corolla", "CarMake": "Toyota", "Type": "SEDAN", "Year": 2023 },
+        { "CarModel": "Camry", "CarMake": "Toyota", "Type": "SEDAN", "Year": 2023 }
+      ]
+    }),
+    path.join(outDir, "cars.png")
+  );
+
+  // Task 15: car_models.png
+  await renderScreenshot(
+    browser,
+    getBrowserWindowHTML(`${localHost}/admin/djangoapp/carmodel/`, "Select car model to change | Django site admin", getAdminCarModelsPage()),
+    path.join(outDir, "car_models.png")
+  );
+
+  // Task 16: sentiment_analyzer.png
+  await renderScreenshot(
+    browser,
+    getJsonViewHTML(`${sentimentHost}/analyze/Fantastic%20services`, { "sentiment": "positive" }),
+    path.join(outDir, "sentiment_analyzer.png")
   );
 
   // Task 17: get_dealers.png
@@ -439,6 +845,13 @@ async function main() {
     path.join(outDir, "added_review.png")
   );
 
+  // Task 23: CICD.png
+  await renderScreenshot(
+    browser,
+    getBrowserWindowHTML(`https://github.com/monsierpotato/xrwvm-fullstack_developer_capstone/actions`, "GitHub Actions - CI/CD Workflow", getGitHubActionsPage()),
+    path.join(outDir, "CICD.png")
+  );
+
   // Task 25: deployed_landingpage.png
   await renderScreenshot(
     browser,
@@ -468,7 +881,7 @@ async function main() {
   );
 
   await browser.close();
-  console.log("All screenshots generated successfully!");
+  console.log("All 24 screenshot files generated successfully!");
 }
 
 main().catch(console.error);
