@@ -1,7 +1,12 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <!-- Link the style sheet here -->
+  <meta charset="UTF-8">
+  <title>About Us - Dealerships</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
 </head>
+<body>
 <div>
   <nav class="navbar navbar-expand-lg navbar-light" style="background-color:darkturquoise; height: 1in;">
     <div class="container-fluid">
@@ -25,44 +30,43 @@
     </div>
   </nav>
   
-    <div class="card" style="width: 80%;margin: auto; margin-top:5%;">
-      <div class="banner" name="about-header">
-      <!-- Insert header information here -->
-      </div>
-      <div style="display: flex;flex-direction: row; margin:auto">
+  <div class="card" style="width: 80%;margin: auto; margin-top:5%;">
+    <div class="banner" name="about-header" style="text-align: center; padding: 20px;">
+      <h1>About Us</h1>
+      <p style="font-size: 1.2em; color: #555;">Welcome to Best Cars Dealership! We are dedicated to providing you with the finest selection of vehicles and superior customer service across the United States.</p>
+    </div>
+    <div style="display: flex;flex-direction: row; margin:auto; justify-content: space-around; width: 100%; padding: 20px;">
       <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
-        <div class="card-body">
-          <p class="title">Person1</p>
-          <p>Person1 Title</p>
-          <p class="card-text">Some text that explains the person1 in about 2 short sentences</p>
-          <p>person1@example.com</p>
+        <img class="card-img-top" src="/static/person.png" alt="Jane Doe" style="width:100px; height:100px; margin:auto; padding-top:10px;">
+        <div class="card-body text-center">
+          <h4 class="title font-weight-bold">Jane Doe</h4>
+          <p class="text-primary font-weight-bold">Chief Executive Officer</p>
+          <p class="card-text">Jane has over 15 years of leadership experience in automotive retail, driving innovation and top-tier customer satisfaction.</p>
+          <p class="text-muted">jane.doe@dealerships.com</p>
         </div>
       </div>
 
       <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
-        <div class="card-body">
-          <p class="title">Person2</p>
-          <p>Person2 Title</p>
-          <p class="card-text">Some text that explains the person2 in about 2 short sentences</p>
-          <p>person2@example.com</p>
+        <img class="card-img-top" src="/static/person.png" alt="John Smith" style="width:100px; height:100px; margin:auto; padding-top:10px;">
+        <div class="card-body text-center">
+          <h4 class="title font-weight-bold">John Smith</h4>
+          <p class="text-primary font-weight-bold">Head of Sales & Operations</p>
+          <p class="card-text">John manages our network of dealerships across the nation, ensuring customers always find the right car at the best price.</p>
+          <p class="text-muted">john.smith@dealerships.com</p>
         </div>
       </div>
 
       <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
-        <div class="card-body">
-          <p class="title">Person3</p>
-          <p>Person3 Title</p>
-          <p class="card-text">Some text that explains the person3 in about 2 short sentences</p>
-          <p>person3@example.com</p>
+        <img class="card-img-top" src="/static/person.png" alt="Emily Davis" style="width:100px; height:100px; margin:auto; padding-top:10px;">
+        <div class="card-body text-center">
+          <h4 class="title font-weight-bold">Emily Davis</h4>
+          <p class="text-primary font-weight-bold">Director of Customer Care</p>
+          <p class="card-text">Emily leads our customer support teams and service quality assurance to ensure every review and feedback is valued.</p>
+          <p class="text-muted">emily.davis@dealerships.com</p>
         </div>
       </div>
     </div>
-    </div>
-    </div>
-    
+  </div>
 </div>
-
+</body>
 </html>
